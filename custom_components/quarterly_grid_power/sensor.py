@@ -92,40 +92,47 @@ class QuarterlyAveragePowerSensor(SensorEntity, RestoreEntity):
     @callback
     async def _async_sample(self, now: datetime) -> None:
         """Read the source entity and update the average."""
-        source_state = self.hass.states.get(self._power_entity)
-
-        if source_state is None:
-            _LOGGER.warning(
-                "Source entity %s does not exist",
-                self._power_entity,
-            )
-            return
-
         try:
-            power = float(source_state.state)
-        except ValueError:
+            source_state = self.hass.states.get(self._power_entity)
+
             _LOGGER.warning(
-                "Source entity %s has a non-numeric state: %s",
+                "Reading source entity %s; state object=%s",
                 self._power_entity,
-                source_state.state,
+                source_state,
             )
-            return
 
-        if not math.isfinite(power):
-            return
+            if source_state is None:
+                _LOGGER.error(
+                    "Source entity does not exist: %s",
+                    self._power_entity,
+                )
+                self._attr_available = False
+                self.async_write_ha_state()
+                return
 
-        # Treat export/negative power as zero grid import.
-        power = max(power, 0.0)
+            power = float(source_state.state)
+            power = max(power, 0.0)
 
-        # Start a new quarter at :00, :15, :30, or :45.
-        if now.minute % 15 == 0 and now.second < SAMPLE_INTERVAL:
-            self._total = self._last_power
-            self._sample_count = 1
-            self._native_value = self._last_power
-        else:
-            self._total += power
-            self._sample_count += 1
+            if now.minute % 15 == 0 and now.second < SAMPLE_INTERVAL:
+                self._total = self._last_power
+                self._sample_count = 1
+            else:
+                self._total += power
+                self._sample_count += 1
+
+            self._last_power = power
             self._native_value = self._total / self._sample_count
+            self._attr_available = True
 
-        self._last_power = power
-        self.async_write_ha_state()
+            _LOGGER.warning(
+                "Quarterly Grid Power value: %.1f W from %s",
+                self._native_value,
+                self._power_entity,
+            )
+
+            self.async_write_ha_state()
+
+        except Exception:
+            _LOGGER.exception("Error while sampling Quarterly Grid Power")
+            self._attr_available = False
+            self.async_write_ha_state()
