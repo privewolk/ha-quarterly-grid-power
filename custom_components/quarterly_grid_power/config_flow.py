@@ -21,7 +21,9 @@ class QuarterlyGridPowerConfigFlow(
         if user_input is not None:
             power_entity = user_input[CONF_POWER_ENTITY]
 
-            await self.async_set_unique_id(power_entity)
+            await self.async_set_unique_id(
+                f"quarterly_grid_power_{power_entity}"
+            )
             self._abort_if_unique_id_configured()
 
             return self.async_create_entry(
