@@ -57,7 +57,7 @@ class QuarterlyAveragePowerSensor(SensorEntity, RestoreEntity):
         self._total = 0.0
         self._sample_count = 0
         self._last_power = 0.0
-        self._native_value = 0.0
+        self._attr_native_value = 0.0
 
         self._remove_interval_listener = None
 
@@ -69,9 +69,9 @@ class QuarterlyAveragePowerSensor(SensorEntity, RestoreEntity):
 
         if last_state is not None:
             try:
-                self._native_value = float(last_state.state)
+                self._attr_native_value = float(last_state.state)
             except ValueError:
-                self._native_value = 0.0
+                self._attr_native_value = 0.0
 
         self._remove_interval_listener = async_track_time_interval(
             self.hass,
@@ -121,12 +121,12 @@ class QuarterlyAveragePowerSensor(SensorEntity, RestoreEntity):
                 self._sample_count += 1
 
             self._last_power = power
-            self._native_value = self._total / self._sample_count
+            self._attr_native_value = self._total / self._sample_count
             self._attr_available = True
 
             _LOGGER.warning(
                 "Quarterly Grid Power value: %.1f W from %s",
-                self._native_value,
+                self._attr_native_value,
                 self._power_entity,
             )
 
