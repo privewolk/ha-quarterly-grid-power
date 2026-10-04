@@ -1,7 +1,9 @@
 {
   "domain": "quarterly_grid_power",
   "name": "Quarterly Grid Power",
-  "codeowners": ["@svendaems"],
+  "codeowners": [
+    "@svendaems"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/svendaems/ha-quarterly-grid-power",
   "issue_tracker": "https://github.com/svendaems/ha-quarterly-grid-power/issues",

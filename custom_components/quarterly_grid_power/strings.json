@@ -1,0 +1,16 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Quarterly Grid Power",
+        "description": "Select the sensor that reports power imported from the grid.",
+        "data": {
+          "power_entity": "P1 power sensor"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This power sensor is already configured."
+    }
+  }
+}
