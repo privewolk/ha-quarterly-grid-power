@@ -130,15 +130,6 @@ The source sensor may currently report a negative value. Negative values are del
 
 Each source sensor can only be configured once. Remove the existing Quarterly Grid Power configuration before adding the same source sensor again.
 
-### HACS shows a commit hash instead of a version number
-
-HACS may show a commit hash when the repository does not have a GitHub release. Create a release using a version tag such as:
-
-```text
-v1.0.3
-```
-
-Then refresh HACS and update the integration.
 
 ## Removing the integration
 
